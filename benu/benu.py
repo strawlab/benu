@@ -9,6 +9,10 @@ from __future__ import division, with_statement
 import cairo
 import os, warnings
 import numpy as np
+
+from matplotlib.backends.backend_cairo import RendererCairo, FigureCanvasCairo
+from matplotlib.figure import Figure
+
 from benu_colormaps import cmaps
 
 D2R = np.pi/180.0
@@ -276,7 +280,7 @@ class ExternalSurfaceCanvas(object):
             how user_rect is transformed into device_rect. One of 'orig',
             'rot -90', 'rot 180', 'rot 90'.
         """
-        return ContextManager(self, device_rect, user_rect, clip, transform)
+        return _TransformContextManager(self, device_rect, user_rect, clip, transform)
 
     def get_transformed_point(self,x,y,device_rect,user_rect,
                               transform=None):
@@ -284,7 +288,40 @@ class ExternalSurfaceCanvas(object):
                                                 transform=transform)
         return matrix.transform_point(x,y)
 
-class ContextManager:
+    def get_figure(self, w, h):
+        return _FigureContextManager(self, w, h)
+
+class _BenuFigureCanvasCairo(FigureCanvasCairo):
+    def __init__(self, figure, wpx, hpx):
+        FigureCanvasCairo.__init__(self, figure)
+        self.wpx = wpx
+        self.hpx = hpx
+
+    def benu_draw(self, ctx):
+        renderer = RendererCairo(self.figure.dpi)
+        renderer.gc.ctx = ctx
+        renderer.set_width_height (self.wpx, self.hpx)
+        self.figure.draw (renderer)
+
+class _FigureContextManager:
+    def __init__(self, canv, w, h):
+        self.w = w
+        self.h = h
+        self.canv = canv
+
+    def __enter__(self):
+        #hardcoded for cairo AFAICT????
+        dpi=72
+        wi = self.w / float(dpi)
+        hi = self.h / float(dpi)
+        self.fig = Figure(figsize=(wi,hi), dpi=dpi)
+        self.figcanv = _BenuFigureCanvasCairo(self.fig, self.w, self.h)
+        return self.fig
+
+    def __exit__(self,exc_type, exc_value, traceback):
+        self.figcanv.benu_draw(self.canv._ctx)
+
+class _TransformContextManager:
     def __init__(self, canv, device_rect, user_rect, clip, transform):
         self.canv = canv
         self.device_rect = device_rect
@@ -311,6 +348,23 @@ class ContextManager:
         if self.clip:
             self.canv._ctx.restore()
         self.canv._ctx.set_matrix(self.orig_matrix)
+
+def test_benu_mpl():
+    import tempfile
+    from utils import set_foregroundcolor, set_backgroundcolor
+    tmp_fname = tempfile.mktemp('.png')
+    canv = Canvas(tmp_fname,500,500)
+    with canv.get_figure(500,500) as fig:
+        ax = fig.add_subplot(111)
+        ax.plot( [5,7,10], [5,7,10], 'r-' )
+        ax.set_xlabel('Xlabel')
+        ax.set_ylabel('Ylabel')
+        set_foregroundcolor(ax, 'white')
+        set_backgroundcolor(ax, 'black')
+        fig.patch.set_facecolor('none')
+
+    canv.save()
+    print tmp_fname
 
 def test_benu():
     import tempfile
@@ -379,9 +433,13 @@ def test_benu():
     ## with c.set_user_coords(1,2):
     ##     pass
 
+    print tmp_fname
+
 class Canvas(ExternalSurfaceCanvas):
     """A drawing surface which handles coordinate transforms"""
     def __init__(self,fname,width,height,**kwargs):
+        width = int(width)
+        height = int(height)
         self._output_ext = os.path.splitext(fname)[1].lower()
         if self._output_ext == '.pdf':
             output_surface = cairo.PDFSurface(fname,
@@ -417,4 +475,6 @@ class Canvas(ExternalSurfaceCanvas):
         return a
 
 if __name__=='__main__':
-    test_benu()
+    #test_benu()
+    test_benu_mpl()
+
