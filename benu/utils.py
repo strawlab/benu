@@ -1,3 +1,5 @@
+import numpy as np
+
 def set_foregroundcolor(ax, color):
     """
     For the specified axes, sets the color of the frame, major ticks,                                                             
@@ -54,3 +56,26 @@ def set_backgroundcolor(ax, color):
     lh = ax.get_legend()
     if lh != None:
         lh.legendPatch.set_facecolor(color)
+
+def scale(w, h, x, y, maximum=True):
+    # see http://code.activestate.com/recipes/577575-scale-rectangle-while-keeping-aspect-ratio/
+    nw = y * w // h
+    nh = x * h // w
+    if maximum ^ (nw >= x):
+        return nw or 1, y
+    return x, nh or 1
+
+def negotiate_panel_size(panels, max_height, margin):
+    #calculate sizes of the panels that fit
+    for name in panels:
+        m = panels[name]
+        m['dw'], m['dh'] = scale(
+                            m['width'], m['height'],
+                            m['device_x1']-m['device_x0'], max_height
+        )
+
+    #recalculate the actual sized output
+    actual_out_h = np.max([panels[name]['dh'] for name in panels]) + 2*margin
+    actual_out_w = np.sum([panels[name]['dw'] for name in panels]) + 2*margin
+
+    return actual_out_w, actual_out_h
