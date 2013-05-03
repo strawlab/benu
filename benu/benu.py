@@ -165,7 +165,7 @@ class ExternalSurfaceCanvas(object):
         if markeredgewidth is not None:
             ctx.set_line_width(orig_linewidth)
 
-    def text(self,text,x,y,color_rgba=None,font_size=10,shadow_offset=None):
+    def text(self,text,x,y,color_rgba=None,font_size=10,shadow_offset=None,font_face="Sans",bold=True):
         """draw text"""
         if ( np.isnan( x ) or
              np.isnan( y )):
@@ -179,8 +179,8 @@ class ExternalSurfaceCanvas(object):
         ctx = self._ctx # shorthand
 
         ctx.set_source_rgba(*color_rgba)
-        ctx.select_font_face ("Sans", cairo.FONT_SLANT_NORMAL,
-                             cairo.FONT_WEIGHT_BOLD)
+        ctx.select_font_face (font_face, cairo.FONT_SLANT_NORMAL,
+                             cairo.FONT_WEIGHT_BOLD if bold else cairo.FONT_WEIGHT_NORMAL)
         ctx.set_font_size(font_size)
 
         ctx.move_to(x,y)
