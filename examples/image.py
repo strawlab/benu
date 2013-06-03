@@ -45,12 +45,12 @@ canv.poly([0,0,actual_out_w,actual_out_w,0],[0,actual_out_h,actual_out_h,0,0], c
 p = panels["lena"]
 device_rect = (p["device_x0"], device_y0, p["dw"], p["dh"])
 user_rect = (0,0,p["width"],p["height"])
-with canv.set_user_coords(device_rect, user_rect) as _canv:
-    _canv.imshow(lena, 0,0, filter='best' )
+with canv.set_user_coords(device_rect, user_rect):
+    canv.imshow(lena, 0,0, filter='best' )
     #in pixel coordinates!
     xpx = np.arange(50,150)
     ypx = (np.sin(xpx)*100) + 150
-    _canv.plot(xpx,ypx, color_rgba=(1,0,0,1))
+    canv.plot(xpx,ypx, color_rgba=(1,0,0,1))
 
 #draw 1/4 size lena in bottom left
 device_rect = (
@@ -60,19 +60,19 @@ device_rect = (
     ih//4
 )
 user_rect = (0,0,ilena.shape[1], ilena.shape[0])
-with canv.set_user_coords(device_rect, user_rect) as _canv:
-    _canv.imshow(ilena, 0,0, filter='best' )
+with canv.set_user_coords(device_rect, user_rect):
+    canv.imshow(ilena, 0,0, filter='best' )
     #in pixel coordinates
     col = 20; row = 80
-    _canv.scatter([col], [row], color_rgba=(0.4,0,0.6,0.8), radius=6, markeredgewidth=5 )
+    canv.scatter([col], [row], color_rgba=(0.4,0,0.6,0.8), radius=6, markeredgewidth=5 )
 
 
 #plot
 p = panels["plot"]
 device_rect = (p["device_x0"], device_y0, p["dw"], p["dh"])
 user_rect = (0,0,p["width"], p["height"])
-with canv.set_user_coords(device_rect, user_rect) as _canv:
-    with _canv.get_figure(p["dw"], p["dh"]) as fig:
+with canv.set_user_coords(device_rect, user_rect):
+    with canv.get_figure(p["dw"], p["dh"]) as fig:
         ax = fig.add_subplot(111)
         ax.plot( [5,7,10], [5,7,10], 'r-' )
         set_foregroundcolor(ax, 'white')
@@ -88,11 +88,11 @@ device_rect = (
     ih
 )
 user_rect = (0,0,ilena.shape[1], ilena.shape[0])
-with canv.set_user_coords(device_rect, user_rect) as _canv:
-    _canv.imshow(ilena, 0,0, filter='best' )
+with canv.set_user_coords(device_rect, user_rect):
+    canv.imshow(ilena, 0,0, filter='best' )
     #in pixel coordinates
     col = 20; row = 80
-    _canv.scatter([col], [row], color_rgba=(0.4,0,0.6,0.8), radius=6, markeredgewidth=5 )
+    canv.scatter([col], [row], color_rgba=(0.4,0,0.6,0.8), radius=6, markeredgewidth=5 )
 
 canv.save()
 print tmp_fname
