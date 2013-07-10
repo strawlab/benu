@@ -3,7 +3,7 @@ import scipy.misc
 import numpy as np
 
 from benu.benu import Canvas
-from benu.utils import set_foregroundcolor, set_backgroundcolor, negotiate_panel_size
+from benu.utils import set_foregroundcolor, set_backgroundcolor, negotiate_panel_size, get_panel_rects
 
 TARGET_OUT_W, TARGET_OUT_H = 1024, 768
 MARGIN = 0
@@ -15,11 +15,6 @@ iw = 160
 ih = 160
 ilena = lena[200:200+ih,200:200+iw]
 
-#define the size of the output
-device_y0 = MARGIN
-device_y1 = TARGET_OUT_H-MARGIN
-max_height = device_y1-device_y0
-
 #define the panels maximum size
 panels = {}
 panels["lena"] = dict(
@@ -27,14 +22,18 @@ panels["lena"] = dict(
     height = lena.shape[0],
     device_x0 = MARGIN,
     device_x1 = 0.5*TARGET_OUT_W - MARGIN//2,
+    device_y0 = MARGIN,
+    device_y1 = TARGET_OUT_H-MARGIN
 )
 panels["plot"] = dict(
     width = 500,
     height = 400,
     device_x0 = 0.5*TARGET_OUT_W + MARGIN//2,
     device_x1 = 1.0*TARGET_OUT_W - MARGIN//2,
+    device_y0 = MARGIN,
+    device_y1 = TARGET_OUT_H-MARGIN
 )
-actual_out_w, actual_out_h = negotiate_panel_size(panels, max_height, MARGIN)
+actual_out_w, actual_out_h = negotiate_panel_size(panels)
 
 tmp_fname = tempfile.mktemp('.png')
 
@@ -43,8 +42,7 @@ canv.poly([0,0,actual_out_w,actual_out_w,0],[0,actual_out_h,actual_out_h,0,0], c
 
 #big lena
 p = panels["lena"]
-device_rect = (p["device_x0"], device_y0, p["dw"], p["dh"])
-user_rect = (0,0,p["width"],p["height"])
+device_rect,user_rect = get_panel_rects(p)
 with canv.set_user_coords(device_rect, user_rect):
     canv.imshow(lena, 0,0, filter='best' )
     #in pixel coordinates!
@@ -69,10 +67,9 @@ with canv.set_user_coords(device_rect, user_rect):
 
 #plot
 p = panels["plot"]
-device_rect = (p["device_x0"], device_y0, p["dw"], p["dh"])
-user_rect = (0,0,p["width"], p["height"])
+device_rect,user_rect = get_panel_rects(p)
 with canv.set_user_coords(device_rect, user_rect):
-    with canv.get_figure(p["dw"], p["dh"]) as fig:
+    with canv.get_figure(user_rect) as fig:
         ax = fig.add_subplot(111)
         ax.plot( [5,7,10], [5,7,10], 'r-' )
         set_foregroundcolor(ax, 'white')
@@ -83,7 +80,7 @@ with canv.set_user_coords(device_rect, user_rect):
 p = panels["plot"]
 device_rect = (
     p["device_x0"]+p["dw"]-iw,
-    device_y0+p["dh"]-ih,
+    p["device_y0"]+p["dh"]-ih,
     iw,
     ih
 )

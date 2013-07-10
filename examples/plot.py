@@ -10,8 +10,6 @@ with canv.get_figure(500,500) as fig:
     ax.plot( [5,7,10], [5,7,10], 'r-' )
     ax.set_xlabel('Xlabel')
     ax.set_ylabel('Ylabel')
-    set_foregroundcolor(ax, 'white')
-    set_backgroundcolor(ax, 'black')
     fig.patch.set_facecolor('none')
 
 canv.save()
