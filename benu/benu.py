@@ -280,7 +280,11 @@ class ExternalSurfaceCanvas(object):
                                                 transform=transform)
         return matrix.transform_point(x,y)
 
-    def get_figure(self, w, h):
+    def get_figure(self, w=None, h=None):
+        if w is None and h is None:
+            raise Exception("Must supply user_rect or w,h")
+        elif h is None:
+            _,_,w,h = w
         return _FigureContextManager(self, w, h)
 
 class _BenuFigureCanvasCairo(FigureCanvasCairo):
