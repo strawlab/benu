@@ -68,7 +68,26 @@ def scale(w, h, x, y, maximum=True):
 def sorted_left_to_right(panels):
     return [k for k,v in sorted(panels.items(), key=lambda x: x[1]['device_x0'])]
 
-def negotiate_panel_size(panels, max_height, margin):
+def _check_panels(panels):
+    REQUIRED = ("width","height","device_x0","device_x1",
+                "device_y0","device_y1")
+    for n,p in panels.items():
+        for k in REQUIRED:
+            if k not in p:
+                raise ValueError("Panel %s missing value %s" % (n,k))
+
+def get_panel_rects(p):
+    device_rect = (p["device_x0"], p["device_y0"], p["dw"], p["dh"])
+    user_rect = (0,0,p["width"],p["height"])
+
+    return device_rect, user_rect
+
+def negotiate_panel_size(panels, max_height=None, margin=0):
+    _check_panels(panels)
+
+    if max_height is None:
+        max_height = np.max([panels[name]['device_y1'] for name in panels])
+
     #calculate sizes of the panels that fit
     for name in panels:
         m = panels[name]
@@ -85,6 +104,8 @@ def negotiate_panel_size(panels, max_height, margin):
     return actual_out_w, actual_out_h
 
 def negotiate_panel_size_same_height(panels, max_width, margin):
+    _check_panels(panels)
+
     #increase the size of all individual boxes until the total width does not
     #exceed max_width
     ch = 0
@@ -146,12 +167,16 @@ if __name__ == "__main__":
             height = fmfheight,
             device_x0 = MARGIN,
             device_x1 = target_out_w//2 - MARGIN//2,
+            device_y0 = MARGIN,
+            device_y1 = target_out_h-MARGIN
         )
         panels["dsc"] = dict(
             width = dscwidth,
             height = dscheight,
             device_x0 = target_out_w//2 + MARGIN//2,
             device_x1 = target_out_w - MARGIN//2,
+            device_y0 = MARGIN,
+            device_y1 = target_out_h-MARGIN
         )
 
         hpanels = panels.copy()
