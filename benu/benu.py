@@ -274,6 +274,11 @@ class ExternalSurfaceCanvas(object):
         """
         return _TransformContextManager(self, device_rect, user_rect, clip, transform)
 
+    def set_user_coords_from_panel(self, panel, **kwargs):
+        device_rect = (panel["device_x0"], panel["device_y0"], panel["dw"], panel["dh"])
+        user_rect = (0,0,panel["width"],panel["height"])
+        return self.set_user_coords(device_rect, user_rect, **kwargs)
+
     def get_transformed_point(self,x,y,device_rect,user_rect,
                               transform=None):
         matrix = self._get_matrix_for_transform(device_rect,user_rect,
@@ -281,7 +286,21 @@ class ExternalSurfaceCanvas(object):
         return matrix.transform_point(x,y)
 
     def get_figure(self, w=None, h=None):
-        if w is None and h is None:
+        """return an appropriately created figure to draw into
+
+        **Arguments**
+
+        w : a panel dict, 4-element user_rect, or width scalar (in pixels)
+
+        **Optional Arguments**
+
+        h : height in pixels if w was given as a single scalar
+        """
+
+        if isinstance(w,dict):
+            h = w['dh']
+            w = w['dw']
+        elif w is None and h is None:
             raise Exception("Must supply user_rect or w,h")
         elif h is None:
             _,_,w,h = w
