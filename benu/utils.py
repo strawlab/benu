@@ -103,7 +103,7 @@ def negotiate_panel_size(panels, max_height=None, margin=0):
 
     return actual_out_w, actual_out_h
 
-def negotiate_panel_size_same_height(panels, max_width, margin):
+def negotiate_panel_size_same_height(panels, max_width):
     _check_panels(panels)
 
     #increase the size of all individual boxes until the total width does not
@@ -182,7 +182,7 @@ if __name__ == "__main__":
         hpanels = panels.copy()
         wpanels = panels.copy()
 
-        actual_out_w, actual_out_h = negotiate_panel_size_same_height(panels, max_width, MARGIN)
+        actual_out_w, actual_out_h = negotiate_panel_size_same_height(panels, max_width)
         print "SAME HEIGHT MOVIE SIZE", actual_out_w, actual_out_h
         pprint(hpanels)
 
