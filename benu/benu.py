@@ -403,4 +403,33 @@ class Canvas(ExternalSurfaceCanvas):
         a.shape = (self._surf.get_width(), self._surf.get_height(), 4)
         return a
 
+    def as_cv2(self):
+        # opencv doesn't handle alpha
+        return self.as_numpy()[:,:,:3]
+
+class NumpyArrayCanvas(ExternalSurfaceCanvas):
+    def __init__(self, w, h):
+        self._array = np.zeros((h, w, 4), dtype=np.uint8)
+        self._surface = cairo.ImageSurface.create_for_data(
+                                self._array, cairo.FORMAT_ARGB32, w, h)
+        self._w = self._surface.get_width()
+        self._h = self._surface.get_height()
+        assert self._w == w
+        assert self._h == h
+        cr = cairo.Context(self._surface)
+        super(NumpyArrayCanvas,self).__init__(cr)
+
+    def get_fullsize_figure(self):
+        return self.get_figure(self._w,self._h)
+
+    def as_numpy(self):
+        return self._array
+
+    def as_cv2(self):
+        # opencv doesn't handle alpha
+        return self._array[:,:,:3]
+
+
+
+
 
