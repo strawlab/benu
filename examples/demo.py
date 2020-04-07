@@ -4,10 +4,8 @@ import tempfile
 from benu.benu import Canvas
 from benu.utils import set_foregroundcolor, set_backgroundcolor
 
-import tempfile
-
-tmp_fname = tempfile.mktemp(".png")
-canv = Canvas(tmp_fname, 500, 500)
+demo_output_filename = "demo.png"
+canv = Canvas(demo_output_filename, 500, 500)
 device_rect = (100, 100, 300, 300)
 ux0 = 0
 uy0 = 0
@@ -84,4 +82,4 @@ canv.save()
 ## with c.set_user_coords(1,2):
 ##     pass
 
-print(tmp_fname)
+print("Saved:", demo_output_filename)
