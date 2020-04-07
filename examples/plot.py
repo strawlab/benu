@@ -1,3 +1,4 @@
+from __future__ import print_function
 import tempfile
 
 from benu.benu import Canvas
@@ -13,4 +14,4 @@ with canv.get_figure(500, 500) as fig:
     fig.patch.set_facecolor("none")
 
 canv.save()
-print tmp_fname
+print(tmp_fname)

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import tempfile
 import random
 import matplotlib.pyplot as plt
@@ -26,4 +27,4 @@ while outer > 10:
     outer = outer // 2
 
 canv.save()
-print tmp_fname
+print(tmp_fname)

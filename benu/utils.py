@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 
 
@@ -192,9 +193,9 @@ if __name__ == "__main__":
         wpanels = panels.copy()
 
         actual_out_w, actual_out_h = negotiate_panel_size_same_height(panels, max_width)
-        print "SAME HEIGHT MOVIE SIZE", actual_out_w, actual_out_h
+        print("SAME HEIGHT MOVIE SIZE", actual_out_w, actual_out_h)
         pprint(hpanels)
 
         actual_out_w, actual_out_h = negotiate_panel_size(wpanels, max_height, MARGIN)
-        print "MAX WIDTH MOVIE SIZE", actual_out_w, actual_out_h
+        print("MAX WIDTH MOVIE SIZE", actual_out_w, actual_out_h)
         pprint(wpanels)

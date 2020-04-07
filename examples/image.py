@@ -1,3 +1,4 @@
+from __future__ import print_function
 import tempfile
 import scipy.misc
 import numpy as np
@@ -97,4 +98,4 @@ with canv.set_user_coords(device_rect, user_rect):
     )
 
 canv.save()
-print tmp_fname
+print(tmp_fname)

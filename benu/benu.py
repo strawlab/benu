@@ -5,6 +5,7 @@ thought to be the phoenix.
 
 """
 from __future__ import division, with_statement
+from __future__ import absolute_import
 
 import cairo
 import os, warnings
@@ -13,7 +14,7 @@ import numpy as np
 from matplotlib.backends.backend_cairo import RendererCairo, FigureCanvasCairo
 from matplotlib.figure import Figure
 
-from benu_colormaps import cmaps
+from .benu_colormaps import cmaps
 
 D2R = np.pi / 180.0
 

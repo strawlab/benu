@@ -1,3 +1,4 @@
+from __future__ import print_function
 import tempfile
 
 from benu.benu import Canvas
@@ -83,4 +84,4 @@ canv.save()
 ## with c.set_user_coords(1,2):
 ##     pass
 
-print tmp_fname
+print(tmp_fname)
