@@ -1,0 +1,42 @@
+name: build-and-test
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ '**' ]
+
+jobs:
+
+  ubuntu-py2:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-16.04, ubuntu-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install requirements
+      run: sudo apt-get install -y python-cairo python-numpy python-matplotlib
+    - name: Build
+      run: sudo python2 setup.py install
+    - name: Test
+      run: python2 examples/demo.py
+
+
+  ubuntu-py3:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-16.04, ubuntu-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install requirements
+      run: sudo apt-get install -y python3-setuptools python3-numpy python3-matplotlib python3-cairo
+    - name: Build
+      run: sudo python3 setup.py install
+    - name: Test
+      run: python3 examples/demo.py
