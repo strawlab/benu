@@ -3,8 +3,6 @@ try:
 except ImportError:
     from distutils.core import setup
 
-setup(name='benu',
-      description='python plotting tool',
-      packages=['benu'],
-      version="0.1.0",
-      )
+setup(
+    name="benu", description="python plotting tool", packages=["benu"], version="0.1.0",
+)
