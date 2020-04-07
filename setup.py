@@ -9,9 +9,9 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
 
 setup(
     name="benu",
+    version="0.1.0",
     description="python plotting tool",
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=["benu"],
-    version="0.1.0",
 )
